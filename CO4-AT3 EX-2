@@ -1,0 +1,59 @@
+# Comparing Greedy and Dynamic Programming
+
+weights = [10, 20, 30, 25]
+profits = [60, 100, 120, 110]
+packages = ["P1", "P2", "P3", "P4"]
+capacity = 50
+
+# ---------- Greedy ----------
+print("----- Greedy Approach -----")
+
+ratio = []
+
+for i in range(len(packages)):
+    ratio.append((profits[i] / weights[i], weights[i], profits[i], packages[i]))
+
+ratio.sort(reverse=True)
+
+selected = []
+total_weight = 0
+total_profit = 0
+
+for r, w, p, name in ratio:
+    if total_weight + w <= capacity:
+        selected.append(name)
+        total_weight += w
+        total_profit += p
+
+print("Selected Packages:", selected)
+print("Total Weight:", total_weight)
+print("Total Profit:", total_profit)
+
+# ---------- Dynamic Programming ----------
+print("\n----- Dynamic Programming -----")
+
+n = len(weights)
+
+dp = [[0]*(capacity+1) for _ in range(n+1)]
+
+for i in range(1, n+1):
+    for w in range(capacity+1):
+        if weights[i-1] <= w:
+            dp[i][w] = max(dp[i-1][w],
+                           profits[i-1] + dp[i-1][w-weights[i-1]])
+        else:
+            dp[i][w] = dp[i-1][w]
+
+print("Maximum Profit:", dp[n][capacity])
+
+w = capacity
+selected = []
+
+for i in range(n, 0, -1):
+    if dp[i][w] != dp[i-1][w]:
+        selected.append(packages[i-1])
+        w -= weights[i-1]
+
+selected.reverse()
+
+print("Optimal Packages:", selected)
