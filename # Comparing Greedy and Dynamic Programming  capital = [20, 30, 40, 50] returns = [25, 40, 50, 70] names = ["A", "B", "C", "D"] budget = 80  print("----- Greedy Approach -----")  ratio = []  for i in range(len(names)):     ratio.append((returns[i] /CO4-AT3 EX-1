@@ -1,0 +1,57 @@
+# RASIKA C(192421199)
+
+capital = [20, 30, 40, 50]
+returns = [25, 40, 50, 70]
+names = ["A", "B", "C", "D"]
+budget = 80
+
+print("----- Greedy Approach -----")
+
+ratio = []
+
+for i in range(len(names)):
+    ratio.append((returns[i] / capital[i], capital[i], returns[i], names[i]))
+
+ratio.sort(reverse=True)
+
+total_capital = 0
+total_return = 0
+selected = []
+
+for r, c, p, n in ratio:
+    if total_capital + c <= budget:
+        selected.append(n)
+        total_capital += c
+        total_return += p
+
+print("Selected Investments:", selected)
+print("Total Investment:", total_capital, "thousand")
+print("Total Return:", total_return, "thousand")
+
+print("\n----- Dynamic Programming -----")
+
+n = len(capital)
+
+dp = [[0]*(budget+1) for _ in range(n+1)]
+
+for i in range(1, n+1):
+    for w in range(budget+1):
+        if capital[i-1] <= w:
+            dp[i][w] = max(dp[i-1][w],
+                           returns[i-1] + dp[i-1][w-capital[i-1]])
+        else:
+            dp[i][w] = dp[i-1][w]
+
+print("Maximum Return:", dp[n][budget], "thousand")
+
+w = budget
+selected = []
+
+for i in range(n, 0, -1):
+    if dp[i][w] != dp[i-1][w]:
+        selected.append(names[i-1])
+        w -= capital[i-1]
+
+selected.reverse()
+
+print("Optimal Portfolio:", selected)
