@@ -1,3 +1,4 @@
+# RASIKA C(192421199)
 def find(parent, i):
     if parent[i] != i:
         parent[i] = find(parent, parent[i])
