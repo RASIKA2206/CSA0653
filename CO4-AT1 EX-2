@@ -1,0 +1,108 @@
+#RASIKA C (192421199)
+
+# ================================================================
+# PROGRAM: University Timetable Scheduling using Backtracking
+# SUBJECT: Design and Analysis of Algorithms
+#
+# DESCRIPTION:
+# This program generates a valid university timetable using
+# Constraint Satisfaction Problem (CSP) with Backtracking.
+#
+# PROBLEM:
+# Schedule exams without conflicts.
+#
+# CONSTRAINTS:
+# 1. No two subjects can use the same time slot.
+# 2. Every subject must be assigned exactly one slot.
+# 3. Students should not have overlapping exams.
+#
+# APPROACH:
+# 1. Select one subject.
+# 2. Try assigning every available time slot.
+# 3. Check all constraints.
+# 4. If valid, continue recursively.
+# 5. Otherwise backtrack.
+#
+# TIME COMPLEXITY:
+# O(m^n)
+# where
+# n = Number of Subjects
+# m = Number of Time Slots
+#
+# SPACE COMPLEXITY:
+# O(n)
+# ================================================================
+
+# Function to check whether slot assignment is safe
+def is_safe(subject, slot):
+
+    # Check neighboring subjects
+    for neighbour in graph[subject]:
+
+        # If neighbour already has same slot
+        if timetable.get(neighbour) == slot:
+            return False
+
+    return True
+
+
+# Backtracking function
+def schedule(subject_index):
+
+    # If all subjects are assigned
+    if subject_index == len(subjects):
+        return True
+
+    current_subject = subjects[subject_index]
+
+    # Try every time slot
+    for slot in slots:
+
+        # Check constraints
+        if is_safe(current_subject, slot):
+
+            # Assign slot
+            timetable[current_subject] = slot
+
+            # Recursive call
+            if schedule(subject_index + 1):
+                return True
+
+            # Backtrack
+            del timetable[current_subject]
+
+    return False
+
+
+# ---------------- MAIN PROGRAM ----------------
+
+subjects = [
+    "Math",
+    "Physics",
+    "Chemistry",
+    "Biology"
+]
+
+# Available time slots
+slots = [1, 2, 3]
+
+# Student conflict graph
+graph = {
+    "Math": ["Physics", "Chemistry"],
+    "Physics": ["Math", "Biology"],
+    "Chemistry": ["Math", "Biology"],
+    "Biology": ["Physics", "Chemistry"]
+}
+
+timetable = {}
+
+# Start scheduling
+if schedule(0):
+
+    print("\nExam Timetable")
+
+    for subject in subjects:
+        print(subject, "-> Time Slot", timetable[subject])
+
+else:
+    print("No feasible timetable found.")
