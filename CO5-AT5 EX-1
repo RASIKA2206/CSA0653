@@ -1,0 +1,93 @@
+#RASIKA C (192421199)
+
+# ================================================================
+# PROGRAM: Job Scheduling using Backtracking
+# SUBJECT: Design and Analysis of Algorithms
+#
+# DESCRIPTION:
+# This program solves the Job Scheduling problem using the
+# Backtracking technique.
+#
+# PROBLEM:
+# A company has several jobs and employees.
+# - Every job must be assigned to exactly one employee.
+# - No employee can perform more than one job.
+# - Every job has a deadline.
+#
+# APPROACH:
+# 1. Try assigning each available employee to a job.
+# 2. Check whether the assignment satisfies all constraints.
+# 3. If constraints are satisfied, continue with the next job.
+# 4. Otherwise backtrack and try another employee.
+#
+# CONSTRAINTS:
+# - One employee can perform only one job.
+# - One job is assigned to only one employee.
+# - Assignment must satisfy the deadline.
+#
+# TIME COMPLEXITY:
+# O(n!)
+#
+# SPACE COMPLEXITY:
+# O(n)
+# ================================================================
+
+# Function to perform backtracking
+def assign_jobs(job_index):
+    # If all jobs are assigned
+    if job_index == len(jobs):
+        print("\nValid Job Assignment Found:")
+        for job in jobs:
+            print(job, "->", assignment[job])
+        return True
+
+    # Get current job
+    current_job = jobs[job_index]
+
+    # Try every employee
+    for employee in employees:
+
+        # Check whether employee is already assigned
+        if employee not in assignment.values():
+
+            # Check deadline constraint
+            if employee_deadline[employee] >= job_deadline[current_job]:
+
+                # Assign employee
+                assignment[current_job] = employee
+
+                # Recursive call
+                if assign_jobs(job_index + 1):
+                    return True
+
+                # Backtrack
+                del assignment[current_job]
+
+    return False
+
+
+# ---------------- MAIN PROGRAM ----------------
+
+jobs = ["Job1", "Job2", "Job3"]
+
+employees = ["Alice", "Bob", "Charlie"]
+
+# Deadline of each job
+job_deadline = {
+    "Job1": 2,
+    "Job2": 4,
+    "Job3": 5
+}
+
+# Maximum deadline each employee can handle
+employee_deadline = {
+    "Alice": 5,
+    "Bob": 4,
+    "Charlie": 2
+}
+
+assignment = {}
+
+# Start Backtracking
+if not assign_jobs(0):
+    print("No feasible assignment found.")
